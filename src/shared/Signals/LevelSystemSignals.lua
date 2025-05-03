@@ -2,7 +2,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 --// Modules
-local Signal = require(ReplicatedStorage.Shared.Libs.Signal.Signal)
+local Signal = require(ReplicatedStorage.Shared.Libs.Signal)
 
 
 local Signals = {
