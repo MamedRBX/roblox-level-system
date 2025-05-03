@@ -1,11 +1,14 @@
---Services
+--// Services
 local DataStoreService = game:GetService("DataStoreService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
 
---Modules
-local ProfileService = require(game.ServerScriptService.Libs:WaitForChild("ProfileService"))
-local DataTemplate = require(game.ReplicatedStorage.PlayerData.Template)
+--// Modules
+local ProfileService = require(ServerScriptService.Server.Libs.ProfileService)
+local DataTemplate = require(ReplicatedStorage.Shared.PlayerData.template)
+local remoteEvents = require(ReplicatedStorage.Shared.Remotes.RemoteEvents)
+local GetAllDataRemote = ReplicatedStorage.Shared.Remotes:WaitForChild("GetAllData")
 
 local ProfileManager = {}
 ProfileManager.__index = ProfileManager
@@ -136,6 +139,8 @@ local function GetAllData(player:Player)
 	return profile.Data
 end
 
-ReplicatedStorage.Events.GetAllData.OnServerInvoke = GetAllData
+
+GetAllDataRemote.OnServerInvoke = GetAllData
+
 
 return ProfileManager
