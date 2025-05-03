@@ -1,20 +1,23 @@
---Modules
-local ProfileManager = require(game.ServerScriptService.PlayerData.ProfileManager)
+--// Services 
+local ServerScriptService = game:GetService("ServerScriptService")
+
+--//Modules
+local ProfileManager = require(ServerScriptService.Server.PlayerData.ProfileManager)
 
 
 local AUTO_SAVE_INTERVAL = 300
 
---Load the Module
+--//Load the Module
 ProfileManager.Init()
 
---LoadProfile when the Player joins
+--//LoadProfile when the Player joins
 game.Players.PlayerAdded:Connect(function(player)
 	task.spawn(function()
 		ProfileManager.LoadPlayer(player)
 	end)
 end)
 
---Save Profile when leaving
+--//Save Profile when leaving
 game.Players.PlayerRemoving:Connect(function(player)
 	task.spawn(function()
 		local profile = ProfileManager.profiles[player]
