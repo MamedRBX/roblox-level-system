@@ -2,8 +2,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 --// Modules
-local ItemHandler = require(script.Parent.ItemHandler)
-local Signals = require(ReplicatedStorage.Events_Signals.SignalBus)
+local Signals = require(ReplicatedStorage.Shared.Signals.LevelSystemSignals)
 
 local QueueSystem = {}
 
@@ -13,9 +12,9 @@ QueueSystem._processing = false
 --// Register actions
 local ActionHandlers = {
 	AddItem = function(player, templateId)
-		if ItemHandler.ProcessAddItem(player, templateId) then
-			Signals.AddItemSignal.Fire(player, templateId)
-		end
+		
+		Signals.AddItemSignal.Fire(player, templateId)	
+		
 	end,
 	
 
