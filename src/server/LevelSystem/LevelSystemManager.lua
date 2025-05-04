@@ -4,6 +4,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 --// Modules
 local QueueSystem = require(script.Parent.QueueSystem)
 
+--// RemoteFolder 
+local LevelRemotes = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder") :: Folder
+
+--// Remotes
+local XpChange = LevelRemotes:WaitForChild("XpChange") :: RemoteEvent
+
+
 
 --// Start of the Module
 local LevelManager = {}
@@ -31,7 +38,11 @@ function LevelManager:FireSignals(player: Player, event: string, ...)
 end
 
 --// Receving Events 
+XpChange.OnServerEvent:Connect(function(player, amount)
+	--make possible validation check
 
+	QueueSystem:Add("XpChange", player , amount)
+end)
 
 
 --// Init the Module
