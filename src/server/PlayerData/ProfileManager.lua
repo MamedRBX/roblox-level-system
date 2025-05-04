@@ -4,24 +4,35 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 
+
 --// Modules
 local ProfileService = require(ServerScriptService.Server.Libs.ProfileService)
 local DataTemplate = require(ReplicatedStorage.Shared.PlayerData.template)
-local remoteEvents = require(ReplicatedStorage.Shared.Remotes.RemoteEvents)
+local remoteEvents = require(ReplicatedStorage.Shared.Remotes.RemoteEvents) 
+
+
+--// Remote for State Manager 
 local GetAllDataRemote = ReplicatedStorage.Shared.Remotes:WaitForChild("GetAllData")
+
 
 local ProfileManager = {}
 ProfileManager.__index = ProfileManager
 
 
-local DataStoreName = "PlayerData_V1_1" --Game Data Key 
+--// Game Data Key
+local DataStoreName = "PlayerData_V1_1"
 local ProfileStore = ProfileService.GetProfileStore(DataStoreName, DataTemplate)
 
-local BackupDataStore = DataStoreService:GetDataStore("Backup_PlayerData_V1_1")  --Backup Data Key
 
---PlayersProfiles
+--//Backup Data Key
+local BackupDataStore = DataStoreService:GetDataStore("Backup_PlayerData_V1_1")  
+
+
+--//Players Profiles
 ProfileManager.profiles = {}
 
+
+--// Leaderstats whenever the player loads
 local function LoadLeaderstats(player: Player)
 	local profile = ProfileManager.profiles[player]
 	if not profile then return warn("[ProfileManager]: Missing profile") end
@@ -32,8 +43,14 @@ local function LoadLeaderstats(player: Player)
 	local Xp = Instance.new("NumberValue", Leaderstats)
 	Xp.Name = "Xp"
 	Xp.Value = profile.Data.Xp
+
+	local Level = Instance.new("NumberValue",Leaderstats)
+	Level.Name = "Level"
+	Level.Value = profile.Data.Level
 end
 
+
+--// Load player and Profile when player joins
 function ProfileManager.LoadPlayer(player)
 	task.wait(1) -- Prevents session locking issues
 
@@ -74,7 +91,8 @@ function ProfileManager.LoadPlayer(player)
 	end
 end
 
---Save
+
+--// Save
 function ProfileManager.Save(player)
 	local profile = ProfileManager.profiles[player]
 	if profile and profile:IsActive() then
@@ -100,13 +118,15 @@ function ProfileManager.Save(player)
 	end
 end
 
---  Force save (for debugging/admin commands)
+
+--// Force save (for debugging/admin commands)
 function ProfileManager.ForceSave(player)
 	print(`🔴 Force Saving Data for {player.Name}`)
 	ProfileManager.Save(player)
 end
 
---  Rollback Restores backup and saves immediately
+
+--// Rollback Restores backup and saves immediately
 function ProfileManager.Rollback(player, version)
 	local success, backupData = pcall(function()
 		return BackupDataStore:GetAsync("Player_" .. player.UserId)
@@ -125,22 +145,26 @@ function ProfileManager.Rollback(player, version)
 	end
 end
 
+
 for _, player in Players:GetPlayers() do 
 	task.spawn(ProfileManager.LoadPlayer , player)
 end
 
+
+--// Init the Module
 function ProfileManager.Init()
 	
 end
 
+
+--// Fetching profile for the State Manager
 local function GetAllData(player:Player)
 	local profile = ProfileManager.profiles[player]
 	if not profile then return end
 	return profile.Data
 end
 
-
-GetAllDataRemote.OnServerInvoke = GetAllData
+GetAllDataRemote.OnServerInvoke = GetAllData --sends State Manager current state from start
 
 
 return ProfileManager
