@@ -1,6 +1,6 @@
 
 local Template = {
-	
+	SkillTreePoints = 0, 
 	SkillPoints = 0, 
 	Level = 1,
 	Xp = 0, 
