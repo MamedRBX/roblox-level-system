@@ -8,7 +8,7 @@ local MicroServices = LevelSystem.MicroServices
 
 --// Modules [LevelSystem]
 local QueueSystem = require(LevelSystem.QueueSystem)
-local LevelManager = require(LevelSystem.LevelManager)
+local LevelManager = require(LevelSystem.LevelSystemManager)
 local Validation = require(LevelSystem.Validation)
 
 --// Init Modules [LevelSystem]
