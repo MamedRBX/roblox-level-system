@@ -11,14 +11,12 @@ QueueSystem._processing = false
 
 --// Register actions
 local ActionHandlers = {
-	AddItem = function(player, templateId)
+	XpChange = function(player, amount)
 		
-		Signals.AddItemSignal.Fire(player, templateId)	
-		
+		Signals.XPChanged:Fire(player, amount)	
 	end,
-	
-
 }
+
 --// Adding an event into the Queue System 
 function QueueSystem:Add(actionName: string, player: Player, ...)
 	local handler = ActionHandlers[actionName]
@@ -29,7 +27,7 @@ function QueueSystem:Add(actionName: string, player: Player, ...)
 		player = player,
 		args = { ... }
 	})
-
+	
 	self:_tryProcess()
 end
 
