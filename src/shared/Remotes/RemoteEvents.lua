@@ -17,4 +17,7 @@ GetAllData.Name = "GetAllData"
 local XPChanged = Instance.new("RemoteEvent", LevelRemotesFolder)
 XPChanged.Name = "XpChange"
 
+local UpdateUi = Instance.new("RemoteEvent", LevelRemotesFolder)
+UpdateUi.Name = "UpdateUi"
+
 return RemoteEvent
