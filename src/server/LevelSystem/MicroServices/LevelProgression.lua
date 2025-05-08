@@ -48,12 +48,10 @@ function LevelProgression.AdjustXp(player:Player , amount:number) --adding Xp to
      Xp = profile.Data.Xp ,
      Level = profile.Data.Level ,
     }) --sending Xp and Level value to the StateManager to update
- 
 end
 
 --// receving Signals
 Signals.XPChanged:Connect(function(player:Player, amount:number)
-
     LevelProgression.AdjustXp(player , amount)
 end)
 
