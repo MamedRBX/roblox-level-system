@@ -11,10 +11,14 @@ QueueSystem._processing = false
 
 --// Register actions
 local ActionHandlers = {
-	XpChange = function(player, amount)
+	XpChange = function(player:Player, amount:number)
 		
 		Signals.XPChanged:Fire(player, amount)	
 	end,
+	SpendMasterySP = function(player:Player , amount:number)
+		Signals.SpendMasterySP:Fire(player, amount)
+		
+	end
 }
 
 --// Adding an event into the Queue System 
