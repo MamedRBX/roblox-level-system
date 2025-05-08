@@ -59,4 +59,31 @@ function Tween.showLevelGainPopup()
     end)
 end
 
+--// In Out Tween for Frames
+function Tween.tweenFrame(frame)
+	local lastSize = frame:GetAttribute("LastSize")
+	if not lastSize then
+		lastSize = frame.Size
+		frame:SetAttribute("LastSize", lastSize)
+	end
+
+	local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+	if not frame.Visible then
+		frame.Size = UDim2.new(0, 0, 0, 0)
+		frame.Visible = true
+
+		local openTween = TweenService:Create(frame, tweenInfo, { Size = lastSize })
+		openTween:Play()
+	else
+		frame:SetAttribute("LastSize", frame.Size)
+
+		local closeTween = TweenService:Create(frame, tweenInfo, { Size = UDim2.new(0, 0, 0, 0) })
+		closeTween:Play()
+		closeTween.Completed:Connect(function()
+			frame.Visible = false
+		end)
+	end
+end
+
 return Tween

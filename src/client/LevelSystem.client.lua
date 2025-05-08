@@ -1,6 +1,7 @@
 --// Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local StarterPack = game:GetService("StarterPack")
 
 
 --// Modules
@@ -9,6 +10,7 @@ local Fusion = require(ReplicatedStorage._Packages.Fusion)
 local LevelSystemConfig = require(ReplicatedStorage.Shared.Config.LevelSystemConfig)
 local Tweens = require(script.Parent.Tweens)
 local Signals = require(ReplicatedStorage.Shared.Signals.LevelSystemSignals)
+local FormatNumber = require(ReplicatedStorage.Shared.Libs.FormatNumberShort)
 
 --// Folders 
 
@@ -31,6 +33,11 @@ local MasterySP = LevelingSystem.MasterySP
 local Holder = MasterySP.Holder
 
 
+local Strength = Holder.Strength
+local Wisdom = Holder.Wisdom
+local Luck = Holder.Luck
+local Stamina = Holder.Stamina
+
 
 --//XP Display 
 local XpBarBackground = MainFrame.XPDisplay.XPBarBackground
@@ -46,7 +53,8 @@ local infoButton = MasterySP.InfoButton
 local closeButton = MasterySP.closeButton
 local OpenButton = LevelingSystem.MasteryButton
 
-
+--// Starter Values
+local debounce = false
 
 --// TextLabel for the Xp Counter
 local XpCounter = New "TextLabel" {  --Xp Counter Label that displayes the current Xp and the Xp requirement for the next Level 
@@ -64,7 +72,8 @@ local XpCounter = New "TextLabel" {  --Xp Counter Label that displayes the curre
     Font = Enum.Font.GothamBold,
 
     Text = Computed(function()
-        return StateManager.Xp:get().." / "..LevelSystemConfig.GetXpForLevel(StateManager.Level:get()) .." XP"
+        local number = LevelSystemConfig.GetXpForLevel(StateManager.Level:get())
+        return StateManager.Xp:get().." / "..FormatNumber(number).." XP"
         
     end)
 
@@ -113,9 +122,52 @@ local XpBarFill = New "Frame" {
 }
 
 
+--// Mastery Gui
+
+local SkillPoints = New "TextLabel" {
+    Name = "SkillPoints",
+    Parent = MasterySP.ExtraStats,
+    BackgroundTransparency = 1,
+    TextScaled = true,
+    Font = Enum.Font.Fondamento,
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.495,0.115),
+    Size = UDim2.fromScale(0.833,0.16),
+    TextColor3 = Color3.fromRGB(255,255,255),
+
+    Text = Computed(function()
+        return "SkillPoints: "..StateManager.SkillPoints:get()
+    end)
+}
+
+local StrengthLevelCounter = New "TextLabel" {
+    Name = "StrengthLevelCounter",
+    Parent = Strength,
+    BackgroundTransparency = 1,
+    TextScaled = true,
+    Font = Enum.Font.GothamBold,
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.62, 0.424),
+    Size = UDim2.fromScale(0.118,0.336),
+    TextColor3 = Color3.fromRGB(255,255,255),
+
+    Text = Computed(function()
+        return StateManager.Masteries["Strength"]:get().." / "..LevelSystemConfig.MileStoneCalc(StateManager.Masteries["Strength"]:get())
+    end)
+
+
+}
+
 --//Button actions
 OpenButton.MouseButton1Up:Connect(function()
-    MasterySP.Visible = not MasterySP.Visible
+	if debounce then return end
+	debounce = true
+
+	Tweens.tweenFrame(MasterySP)
+
+	task.delay(1, function()
+		debounce = false
+	end)
 end)
 
 closeButton.MouseButton1Up:Connect(function()
@@ -125,6 +177,7 @@ end)
 infoButton.MouseButton1Up:Connect(function()
     --show infos 
 end)
+
 
 --// Receving Signals
 Signals.XpPopUp:Connect(function(old:number , new:number)
