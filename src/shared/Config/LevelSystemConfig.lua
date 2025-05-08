@@ -24,4 +24,19 @@ function LevelSystemConfig.SkillCap(amountToAdd:number,SkillAmount:number) --Jus
     end
 end 
 
+
+function LevelSystemConfig.MileStoneCalc(LevelAmount: number): number --return the amount to the next Milestole
+	local milestones = {25, 50, 75, 100}
+	for _, milestone in ipairs(milestones) do
+		if LevelAmount < milestone then
+			return milestone
+		end
+	end
+	warn("[LevelSystemConfig]: Level exceeds all milestones")
+end
+
+
+
+
+
 return  LevelSystemConfig

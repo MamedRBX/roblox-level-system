@@ -74,7 +74,6 @@ local XpCounter = New "TextLabel" {  --Xp Counter Label that displayes the curre
     Text = Computed(function()
         local number = LevelSystemConfig.GetXpForLevel(StateManager.Level:get())
         return StateManager.Xp:get().." / "..FormatNumber(number).." XP"
-        
     end)
 
 

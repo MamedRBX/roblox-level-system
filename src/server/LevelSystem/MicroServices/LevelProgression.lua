@@ -27,8 +27,8 @@ function LevelProgression.AdjustXp(player:Player , amount:number) --adding Xp to
     local totalXp = currentXp + amount
 
     
-    --Leveling loop 
-    while totalXp >= LevelSystemConfig.GetXpForLevel( currentLevel) do
+    
+    while totalXp >= LevelSystemConfig.GetXpForLevel( currentLevel) do --Levling loop
         totalXp -= LevelSystemConfig.GetXpForLevel(currentLevel)
         profile.Data.Level = currentLevel + 1
         --sending signal that the player has leveled up
