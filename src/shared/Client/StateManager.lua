@@ -12,7 +12,6 @@ local Signals = require(ReplicatedStorage.Shared.Signals.LevelSystemSignals)
 local UpdateUiRemote  = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder"):WaitForChild("UpdateUi") :: RemoteEvent
 
 local isDataLoaded = false
-
 local PlayerData: Template.PlayerData
 
 --// Fusion Variables 
@@ -30,18 +29,25 @@ local function LoadData()
 	isDataLoaded = true	
 end
 
-
---// load all the data
-LoadData()
+LoadData() --load all the data
 
 
-local StateManager = {}
+local StateManager = {} --Start of the Module Script
+
+
+StateManager.Masteries = {} --List of Masteries and their values
 
 --// Loading Fusion Values
 function StateManager.InitReactiveValues()
 	StateManager.Level = Value(PlayerData.Level)
 	StateManager.Xp = Value(PlayerData.Xp)
-	--put all the changable values of the player right here
+	StateManager.SkillPoints = Value(PlayerData.SkillPoints)
+	StateManager.SkillTreePoints = Value(PlayerData.SkillTreePoints)
+
+	-- Fill the Masteries table
+	for skillName, level in pairs(PlayerData.Skills) do
+		StateManager.Masteries[skillName] = Value(level)
+	end
 end
 
 function StateManager.GetData(): Template.PlayerData
@@ -63,8 +69,8 @@ UpdateUiRemote.OnClientEvent:Connect(function(key, payload)
 	if key == "Update" then
 		for stat, value in pairs(payload) do
 			if StateManager[stat] then
-				--we send a signal to the client for the pop up Xp
-				if stat == "Xp" then
+				--We send a signal to the client for the pop up Xp
+				if stat == "Xp" then 
 					if StateManager.Xp:get() < value then
 						Signals.XpPopUp:Fire(StateManager.Xp:get(), value)
 					end
