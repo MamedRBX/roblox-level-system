@@ -9,7 +9,7 @@ local LevelRemotes = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotes
 
 --// Remotes
 local XpChange = LevelRemotes:WaitForChild("XpChange") :: RemoteEvent
-
+local SpendMasterySP = LevelRemotes:WaitForChild("SpendMasterySP") :: RemoteEvent
 
 
 --// Start of the Module
@@ -43,6 +43,14 @@ XpChange.OnServerEvent:Connect(function(player, amount)
 
 	QueueSystem:Add("XpChange", player , amount)
 end)
+
+SpendMasterySP.OnServerEvent:Connect(function(player:Player , amount:number, SkillName:string)
+	--validation check
+
+	QueueSystem:Add("SpendMasterySP", player, amount, SkillName)
+end)
+
+
 
 
 --// Init the Module
