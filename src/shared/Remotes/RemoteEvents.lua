@@ -20,4 +20,11 @@ XPChanged.Name = "XpChange"
 local UpdateUi = Instance.new("RemoteEvent", LevelRemotesFolder)
 UpdateUi.Name = "UpdateUi"
 
+local SpendMasterySP = Instance.new("RemoteEvent", LevelRemotesFolder)
+SpendMasterySP.Name = "SpendMasterySP"
+
+local SpendSkillTreeSP = Instance.new("RemoteEvent", LevelRemotesFolder)
+SpendSkillTreeSP.Name = "SpendSkilTreeSP"
+
+
 return RemoteEvent
