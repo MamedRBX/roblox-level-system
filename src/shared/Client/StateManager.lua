@@ -5,6 +5,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 --// Modules 
 local Template = require(ReplicatedStorage.Shared.PlayerData.template)
 local Fusion = require(ReplicatedStorage._Packages.Fusion)
+local Signals = require(ReplicatedStorage.Shared.Signals.LevelSystemSignals)
+
 
 --//Remotes 
 local UpdateUiRemote  = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder"):WaitForChild("UpdateUi") :: RemoteEvent
@@ -50,18 +52,31 @@ function StateManager.GetData(): Template.PlayerData
 	return PlayerData
 end
 
-
+print(PlayerData.SkillPoints)
 --// Recevie Remotes
-UpdateUiRemote.OnClientEvent:Connect(function(key:string , payload: {})
-	if not key then return warn("[StateManager]:Missing key") end
-	if not payload then return warn("[StateManager]: Missing payload") end
+UpdateUiRemote.OnClientEvent:Connect(function(key, payload)
+	if not key or not payload then
+		warn("[StateManager]:Missing key or payload")
+		return
+	end
+
 	if key == "Update" then
-        for stat, value in pairs(payload) do
-            if StateManager[stat] then
-                StateManager[stat]:set(value)
-            end
-        end
-    end
+		for stat, value in pairs(payload) do
+			if StateManager[stat] then
+				--we send a signal to the client for the pop up Xp
+				if stat == "Xp" then
+					if StateManager.Xp:get() < value then
+						Signals.XpPopUp:Fire(StateManager.Xp:get(), value)
+					end
+				elseif stat == "Level" then
+					if StateManager.Level:get() < value then
+						Signals.LevelPopUp:Fire()
+					end
+				end
+				StateManager[stat]:set(value)
+			end
+		end
+	end
 end)
 
 return StateManager
