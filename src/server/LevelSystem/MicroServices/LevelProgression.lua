@@ -22,17 +22,18 @@ function LevelProgression.AdjustXp(player:Player , amount:number) --adding Xp to
     local currentXp = profile.Data.Xp
     local currentLevel = profile.Data.Level
 
-    
+    --checking if the player is about to exede the Level cap
+    if not LevelSystemConfig.LevelCap(currentLevel) then return print("Maxed Level reached") end 
 
     local totalXp = currentXp + amount
 
     
     
-    while totalXp >= LevelSystemConfig.GetXpForLevel( currentLevel) do --Levling loop
+    while totalXp >= LevelSystemConfig.GetXpForLevel(currentLevel) and LevelSystemConfig.LevelCap(currentLevel) do --Levling loop
         totalXp -= LevelSystemConfig.GetXpForLevel(currentLevel)
         profile.Data.Level = currentLevel + 1
         --sending signal that the player has leveled up
-        Signals.LevelUp:Fire(player) --> 1 stands for 1 levelup , possibly could add more 
+        Signals.LevelUp:Fire(player)
     end
     
     -- Update xp
