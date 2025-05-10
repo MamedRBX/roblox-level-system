@@ -8,7 +8,7 @@ local GiveXP = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder
 task.wait(3)
 
 while true do
-    GiveXP:FireServer(2000)
-    task.wait(1)
+    GiveXP:FireServer(50)
+    task.wait(2)
 end
 
