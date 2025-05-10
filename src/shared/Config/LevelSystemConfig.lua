@@ -33,6 +33,18 @@ function LevelSystemConfig.MileStoneCalc(LevelAmount: number): number --return t
 		end
 	end
 	warn("[LevelSystemConfig]: Level exceeds all milestones")
+    return #milestones
+end
+
+function LevelSystemConfig.MileStoneNumber(LevelAmount: number): number
+    local milestones = {25, 50, 75, 100}
+	for index, milestone in ipairs(milestones) do
+		if LevelAmount < milestone then
+			return index
+		end
+	end
+	warn("[LevelSystemConfig]: Level exceeds all milestones")
+    return #milestones
 end
 
 
