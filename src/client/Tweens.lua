@@ -4,7 +4,7 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 --// Modules 
-local Janitor = require(ReplicatedStorage.Shared.Libs.Janitor)
+local Janitor = require(ReplicatedStorage._Packages.Janitor)
 
 local Tween = {} ---Start of the Module
 
@@ -30,18 +30,27 @@ function Tween.showXpGainPopup(amount:number)
         TextStrokeTransparency = 1
     }
 
-    local tween = TweenService:Create(popup, TweenInfo.new(3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
-    
-    tween.Completed:Connect(function()
-        
+    local Tween = TweenService:Create(popup, TweenInfo.new(3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+	Position = UDim2.fromScale(0.32, 0.3),
+	TextTransparency = 1,
+	TextStrokeTransparency = 1
+    })
+
+    local conn = Tween.Completed:Connect(function()
+        janitor:Destroy()
     end)
 
-    tween:Play()
+    janitor:Add(conn, "Disconnect")
+    janitor:Add(popup, "Destroy")
+
+    Tween:Play()
 end
 
 
 --// Popup Level Label
 function Tween.showLevelGainPopup()
+    local janitor = Janitor.new()
+
     local popup = Instance.new("TextLabel")
     popup.Text = "LevelUp!"
     popup.TextColor3 = Color3.fromRGB(227, 227, 0)
@@ -62,9 +71,16 @@ function Tween.showLevelGainPopup()
 
     local tween = TweenService:Create(popup, TweenInfo.new(3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
     tween:Play()
-    tween.Completed:Connect(function()
-        popup:Destroy()
+
+
+    local conn = tween.Completed:Connect(function()
+        janitor:Destroy()
     end)
+
+    janitor:Add(conn,"Disconnect")
+    janitor:Add(popup, "Destroy")
+
+    tween:Play()
 end
 
 --// In Out Tween for Frames
