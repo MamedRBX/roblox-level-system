@@ -15,8 +15,8 @@ local ActionHandlers = {
 		
 		Signals.XPChanged:Fire(player, amount)	
 	end,
-	SpendMasterySP = function(player:Player , amount:number)
-		Signals.SpendMasterySP:Fire(player, amount)
+	SpendMasterySP = function(player:Player , amount:number, SkillName:string)
+		Signals.SpendMasterySP:Fire(player, amount, SkillName)
 		
 	end
 }
