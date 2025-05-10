@@ -20,12 +20,12 @@ ProfileManager.__index = ProfileManager
 
 
 --// Game Data Key
-local DataStoreName = "PlayerData_V1_2"
+local DataStoreName = "PlayerData_V1_3"
 local ProfileStore = ProfileService.GetProfileStore(DataStoreName, DataTemplate)
 
 
 --//Backup Data Key
-local BackupDataStore = DataStoreService:GetDataStore("Backup_PlayerData_V1_1")  
+local BackupDataStore = DataStoreService:GetDataStore("Backup_PlayerData_V1_3")  
 
 
 --//Players Profiles
