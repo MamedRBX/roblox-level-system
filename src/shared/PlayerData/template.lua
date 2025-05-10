@@ -4,7 +4,6 @@ export type SkillLevels = {
     Wisdom: number,
     Stamina: number,
     Luck: number,
-    Stealth: number,
 }
 
 local SkillLevels:SkillLevels = {
@@ -12,7 +11,6 @@ local SkillLevels:SkillLevels = {
 	Wisdom = 0,
 	Stamina = 0,
 	Luck = 0,
-	Stealth = 0
 } 
 
 local Template = {
