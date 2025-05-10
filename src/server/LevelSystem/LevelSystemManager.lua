@@ -1,10 +1,12 @@
 --// Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 --// Modules
-local QueueSystem = require(script.Parent.QueueSystem)
+local QueueSystem = require(ServerScriptService.Server.LevelSystem.QueueSystem)
+local Validation = require(ServerScriptService.Server.LevelSystem.Validation)
 
---// RemoteFolder 
+--// Folder 
 local LevelRemotes = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder") :: Folder
 
 --// Remotes
@@ -12,41 +14,23 @@ local XpChange = LevelRemotes:WaitForChild("XpChange") :: RemoteEvent
 local SpendMasterySP = LevelRemotes:WaitForChild("SpendMasterySP") :: RemoteEvent
 
 
---// Start of the Module
-local LevelManager = {}
+
+local LevelManager = {} --Start of the Module
 
 
---// Behaviour and Event handling
-local SignalHandlers = {
-
-	AddItemEvent = function(self, player, ...)
-		if not ... then return print("No TemplateId was passed down") end
-		local templateId = ...
-		QueueSystem:Add("AddItem", player, templateId)
- 
-	end,
-}
-
---// Giving the received Event a behaviour
-function LevelManager:FireSignals(player: Player, event: string, ...)
-	local handler = SignalHandlers[event]
-	if handler then 
-		handler(self, player, ...)
-	else
-		warn("InventorySystem: No logic defined for event '" .. tostring(event) .. "'")
-	end
-end
 
 --// Receving Events 
 XpChange.OnServerEvent:Connect(function(player, amount)
 	--make possible validation check
-
+	local valid = Validation.AdjustXp(player)
+	if not valid then return end 
 	QueueSystem:Add("XpChange", player , amount)
 end)
 
 SpendMasterySP.OnServerEvent:Connect(function(player:Player , amount:number, SkillName:string)
 	--validation check
-
+	local valid = Validation.SkillPointCheck(player)
+	if not valid then return end
 	QueueSystem:Add("SpendMasterySP", player, amount, SkillName)
 end)
 
