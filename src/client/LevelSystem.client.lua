@@ -63,8 +63,10 @@ local XpCounter = New "TextLabel" {     --XP and XpReQ display
 	Font = Enum.Font.GothamBold,
 
 	Text = Computed(function()
+        
 		local level = StateManager.Level:get()
 		local requiredXp = LevelSystemConfig.GetXpForLevel(level)
+        if not LevelSystemConfig.LevelCap(StateManager.Level:get()) then return FormatNumber(requiredXp).." / "..FormatNumber(requiredXp).." XP" end
 		return FormatNumber(math.floor(SmoothXp:get())).." / "..FormatNumber(requiredXp).." XP"
 	end)
 }
@@ -97,22 +99,32 @@ UiStrokeLevelCounter.Thickness = 0.6
 local XpBarFill = New "Frame" {     --Xp ProgressBar display  
     Name = "XpBar",
     Parent = MainFrame.XPDisplay.XPBarBackground,
-    BackgroundColor3 = Color3.fromRGB(0,255,0),
     BorderSizePixel = 0,
     Position = UDim2.fromScale(0, 0),
 
     Size = Fusion.Spring(Computed(function()
+        if not LevelSystemConfig.LevelCap(StateManager.Level:get()) then 
+            
+            return UDim2.fromScale(1, 1) 
+        end
         local currentXp = StateManager.Xp:get()
         local maxXp = LevelSystemConfig.GetXpForLevel(StateManager.Level:get())
         local fillRatio = math.clamp(currentXp / maxXp, 0, 1)
         return UDim2.fromScale(fillRatio, 1)
-    end), 15) 
+    end), 15),
+    BackgroundColor3 = Computed(function()
+        if LevelSystemConfig.LevelCap(StateManager.Level:get()) then
+            return Color3.fromRGB(0,255,0)
+        else
+            return Color3.fromRGB(227,227,0)
+        end
+    end)
 }
 
 
 
 
---// Fusion Uis [Mastery Ui: SkillPointsCounter, SkillCounter , MileStones , ]
+--// Fusion Uis [Mastery Ui: SkillPointsCounter, SkillCounter , MileStones , SkillProgressBars]
 
 local SkillPoints = New "TextLabel" {     --SkillPoints displayed 
     Name = "SkillPoints",
@@ -131,18 +143,12 @@ local SkillPoints = New "TextLabel" {     --SkillPoints displayed
 }
 
 
-FusionLevelUi.CreateSkillCounterUi({
+FusionLevelUi.CreateSkillCounterUi({ --handles SkillCounter, Milestone display , skillprogressbar
     Strength,
     Wisdom,
     Luck,
     Stamina,
 })
-
-
-
-
-
-
 
 
 
