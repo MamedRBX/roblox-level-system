@@ -29,31 +29,30 @@ function MasterySP.OnLevelUp(player)
 
 end
 
-function MasterySP.OnSPSpend(player: Player, amount:number, SkillName:string)
-    local profile = ProfileManager.profiles[player]
-    if not profile then return warn("[MasterySP]: Missing Profile") end
+function MasterySP.OnSPSpend(player: Player, amount: number, SkillName: string)
+	local profile = ProfileManager.profiles[player]
+	if not profile then return warn("[MasterySP]: Missing Profile") end
 
-    if amount >= profile.Data.SkillPoints then --checking if player has enough points for what he wants to skill x amount of times
-       
-        if not profile.Data.Skills[SkillName] then return warn("[Mastery]: Skill Missing"..SkillName) end
+	local current = profile.Data.Skills[SkillName]
+	if not current then return warn("[MasterySP]: Skill Missing " .. SkillName) end
 
-        --make possible cap check here , 20 , 50 maybe 100 skillpoints as a cap
-        
-        local amountToAdd , b  =  LevelSystemConfig.SkillCap(amount, profile.Data.Skills[SkillName]) 
-        profile.Data.Skills[SkillName] += amount
-        profile.Data.SkillPoints -= amount
+	local skillPoints = profile.Data.SkillPoints
 
-        --Update Ui
-        UpdateUi:FireClient(player , "Update", {
-            SkillPoints = profile.Data.SkillPoints,
-            Skills = profile.Data.Skills
-        })
+	for i = 1, amount do
+		if skillPoints <= 0 then break end
+		if not LevelSystemConfig.SkillCap(current) then break end
 
-    else
-        print("the player does not have enough skills to upgrade this skill x time")
-    end
+		current += 1
+		skillPoints -= 1
+	end
 
+	profile.Data.Skills[SkillName] = current
+	profile.Data.SkillPoints = skillPoints
 
+	UpdateUi:FireClient(player, "Update", {
+		SkillPoints = skillPoints,
+		Skills = profile.Data.Skills
+	})
 end
 
 --// Receving Signals
