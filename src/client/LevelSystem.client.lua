@@ -48,7 +48,6 @@ local OpenButton = LevelingSystem.MasteryButton
 local debounce = false
 
 
-
 --// Fusion Uis [Level Display , Xp Display, ProgressBar]
 local SmoothXp = Fusion.Spring(StateManager.Xp, 30, 1) --smooting out the numbers that Change per Xp gain
 

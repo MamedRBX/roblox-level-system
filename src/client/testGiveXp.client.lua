@@ -9,6 +9,6 @@ task.wait(3)
 
 while true do
     GiveXP:FireServer(50)
-    task.wait(2)
+    task.wait(0.2)
 end
 

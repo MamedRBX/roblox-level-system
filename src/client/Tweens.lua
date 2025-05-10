@@ -1,11 +1,17 @@
 --// Services 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+--// Modules 
+local Janitor = require(ReplicatedStorage.Shared.Libs.Janitor)
 
 local Tween = {} ---Start of the Module
 
 --// Popup Xp Label 
 function Tween.showXpGainPopup(amount:number)
+    local janitor = Janitor.new()
+
     local popup = Instance.new("TextLabel")
     popup.Text = "+" .. amount .. " XP"
     popup.TextColor3 = Color3.fromRGB(0, 255, 0)
@@ -25,10 +31,12 @@ function Tween.showXpGainPopup(amount:number)
     }
 
     local tween = TweenService:Create(popup, TweenInfo.new(3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal)
-    tween:Play()
+    
     tween.Completed:Connect(function()
-        popup:Destroy()
+        
     end)
+
+    tween:Play()
 end
 
 
