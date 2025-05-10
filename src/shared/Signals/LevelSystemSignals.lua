@@ -6,13 +6,18 @@ local Signal = require(ReplicatedStorage.Shared.Libs.Signal)
 
 
 local Signals = {
+    --// Server Signals
     XPChanged = Signal.new(),
     LevelUp = Signal.new(), 
-    XpPopUp = Signal.new(),
-    LevelPopUp = Signal.new(),
     SpendMasterySP = Signal.new(),
-    SpendSkillTreeSP = Signal.new()
+    SpendSkillTreeSP = Signal.new(),
     -- add more as needed
+
+    
+    --// Client signals 
+    LevelPopUp = Signal.new(),
+    XpPopUp = Signal.new(),
+
 }
 
 return Signals
