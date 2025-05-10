@@ -1,5 +1,6 @@
 
 --// Services 
+local ProximityPromptService = game:GetService("ProximityPromptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 --// Modules 
@@ -48,6 +49,7 @@ function StateManager.InitReactiveValues()
 	for skillName, level in pairs(PlayerData.Skills) do
 		StateManager.Masteries[skillName] = Value(level)
 	end
+	print(StateManager.Masteries)
 end
 
 function StateManager.GetData(): Template.PlayerData
@@ -58,29 +60,36 @@ function StateManager.GetData(): Template.PlayerData
 	return PlayerData
 end
 
-print(PlayerData.SkillPoints)
 --// Recevie Remotes
 UpdateUiRemote.OnClientEvent:Connect(function(key, payload)
 	if not key or not payload then
 		warn("[StateManager]:Missing key or payload")
 		return
 	end
-
+	
 	if key == "Update" then
-		for stat, value in pairs(payload) do
-			if StateManager[stat] then
-				--We send a signal to the client for the pop up Xp
-				if stat == "Xp" then 
-					if StateManager.Xp:get() < value then
-						Signals.XpPopUp:Fire(StateManager.Xp:get(), value)
-					end
-				elseif stat == "Level" then
-					if StateManager.Level:get() < value then
-						Signals.LevelPopUp:Fire()
-					end
+		for stat, value in pairs(payload) do --We go throught the updated Data from the server
+
+			if stat == "Xp" then 
+				if StateManager.Xp:get() < value then --quick validation
+					Signals.XpPopUp:Fire(StateManager.Xp:get(), value)--just for a xp popup frame
 				end
-				StateManager[stat]:set(value)
+			elseif stat == "Level" then
+				if StateManager.Level:get() < value then --quick validation
+					Signals.LevelPopUp:Fire() --just for a Level popup frame 
+				end
+			elseif stat == "Skills" then --When the server updates a Skill , then it sends a table of all skills with their values
+				for skill, skillvalue in pairs(value) do
+					local mastery = StateManager.Masteries[skill]
+					if mastery then
+						mastery:set(skillvalue)
+					end
+					
+				end
+				return 
 			end
+			StateManager[stat]:set(value)
+		
 		end
 	else
 		warn("[StateManager]: Key is not recognized")
