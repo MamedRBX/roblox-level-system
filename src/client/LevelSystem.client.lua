@@ -1,24 +1,20 @@
 --// Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local StarterPack = game:GetService("StarterPack")
+local StarterPlayer = game:GetService("StarterPlayer")
 
 
 --// Modules
 local StateManager = require(ReplicatedStorage.Shared.Client.StateManager)
 local Fusion = require(ReplicatedStorage._Packages.Fusion)
 local LevelSystemConfig = require(ReplicatedStorage.Shared.Config.LevelSystemConfig)
-local Tweens = require(script.Parent.Tweens)
+local Tweens = require(StarterPlayer.StarterPlayerScripts.Client.Tweens)
 local Signals = require(ReplicatedStorage.Shared.Signals.LevelSystemSignals)
 local FormatNumber = require(ReplicatedStorage.Shared.Libs.FormatNumberShort)
-
---// Folders 
-
+local FusionLevelUi = require(StarterPlayer.StarterPlayerScripts.Client.FusionLevelUi)
 
 
---//init StateManager with Fusion variables
-StateManager.InitReactiveValues()
-
+StateManager.InitReactiveValues() --init StateManager with Fusion variables
 
 --// [Refs]
 
@@ -32,21 +28,16 @@ local MasterySP = LevelingSystem.MasterySP
 --//MasterySP
 local Holder = MasterySP.Holder
 
-
 local Strength = Holder.Strength
 local Wisdom = Holder.Wisdom
 local Luck = Holder.Luck
 local Stamina = Holder.Stamina
 
 
---//XP Display 
-local XpBarBackground = MainFrame.XPDisplay.XPBarBackground
-
-
 --// Fusion variables
 local New = Fusion.New
 local Computed = Fusion.Computed
-local Value = Fusion.Value
+
 
 --// Buttons
 local infoButton = MasterySP.InfoButton
@@ -56,36 +47,35 @@ local OpenButton = LevelingSystem.MasteryButton
 --// Starter Values
 local debounce = false
 
---// TextLabel for the Xp Counter
-local XpCounter = New "TextLabel" {  --Xp Counter Label that displayes the current Xp and the Xp requirement for the next Level 
-
-    Name = "XpCounter",
-    Parent = LevelingSystem.MainFrame.Level,
-    Position = UDim2.fromScale(1.087, 0.097),
-    Size = UDim2.fromScale(4.02, 0.249),
-    --TextStrokeColor3 =  Color3.fromRGB(67, 73, 104),
-    TextColor3 = Color3.fromRGB(118, 125, 171),
-    TextXAlignment = Enum.TextXAlignment.Left,
-    BackgroundTransparency = 1,
-    TextScaled = true,
-    --TextStrokeTransparency = 0,
-    Font = Enum.Font.GothamBold,
-
-    Text = Computed(function()
-        local number = LevelSystemConfig.GetXpForLevel(StateManager.Level:get())
-        return StateManager.Xp:get().." / "..FormatNumber(number).." XP"
-    end)
 
 
+--// Fusion Uis [Level Display , Xp Display, ProgressBar]
+local SmoothXp = Fusion.Spring(StateManager.Xp, 30, 1) --smooting out the numbers that Change per Xp gain
+
+local XpCounter = New "TextLabel" {     --XP and XpReQ display
+	Name = "XpCounter",
+	Parent = LevelingSystem.MainFrame.Level,
+	Position = UDim2.fromScale(1.087, 0.097),
+	Size = UDim2.fromScale(4.02, 0.249),
+	TextColor3 = Color3.fromRGB(118, 125, 171),
+	TextXAlignment = Enum.TextXAlignment.Left,
+	BackgroundTransparency = 1,
+	TextScaled = true,
+	Font = Enum.Font.GothamBold,
+
+	Text = Computed(function()
+		local level = StateManager.Level:get()
+		local requiredXp = LevelSystemConfig.GetXpForLevel(level)
+		return FormatNumber(math.floor(SmoothXp:get())).." / "..FormatNumber(requiredXp).." XP"
+	end)
 }
-
 local UiStroke = Instance.new("UIStroke", XpCounter) 
 UiStroke.Color = Color3.fromRGB(67, 73, 104)
 UiStroke.Thickness = 1.5
 
 
---// TextLabel for the Level Counter
-local LevelCounter = New "TextLabel"  {
+
+local LevelCounter = New "TextLabel"  {     --Level counter display 
     Name = "LevelConuter",
     Parent = LevelingSystem.MainFrame.Level,
     BackgroundTransparency = 1,
@@ -99,19 +89,19 @@ local LevelCounter = New "TextLabel"  {
         return StateManager.Level:get()       
     end)
 }
-
-local UiStrokeLevelCounter = Instance.new("UIStroke",LevelCounter)
+local UiStrokeLevelCounter = Instance.new("UIStroke",LevelCounter)  
 UiStrokeLevelCounter.Color = Color3.fromRGB(255, 255, 127)
 UiStrokeLevelCounter.Thickness = 0.6
 
 
---// Frame for the XPBar 
-local XpBarFill = New "Frame" {
+
+local XpBarFill = New "Frame" {     --Xp ProgressBar display  
     Name = "XpBar",
-    Parent = XpBarBackground,
+    Parent = MainFrame.XPDisplay.XPBarBackground,
     BackgroundColor3 = Color3.fromRGB(0,255,0),
     BorderSizePixel = 0,
     Position = UDim2.fromScale(0, 0),
+
     Size = Fusion.Spring(Computed(function()
         local currentXp = StateManager.Xp:get()
         local maxXp = LevelSystemConfig.GetXpForLevel(StateManager.Level:get())
@@ -121,9 +111,11 @@ local XpBarFill = New "Frame" {
 }
 
 
---// Mastery Gui
 
-local SkillPoints = New "TextLabel" {
+
+--// Fusion Uis [Mastery Ui: SkillPointsCounter, SkillCounter , MileStones , ]
+
+local SkillPoints = New "TextLabel" {     --SkillPoints displayed 
     Name = "SkillPoints",
     Parent = MasterySP.ExtraStats,
     BackgroundTransparency = 1,
@@ -139,23 +131,22 @@ local SkillPoints = New "TextLabel" {
     end)
 }
 
-local StrengthLevelCounter = New "TextLabel" {
-    Name = "StrengthLevelCounter",
-    Parent = Strength,
-    BackgroundTransparency = 1,
-    TextScaled = true,
-    Font = Enum.Font.GothamBold,
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    Position = UDim2.fromScale(0.62, 0.424),
-    Size = UDim2.fromScale(0.118,0.336),
-    TextColor3 = Color3.fromRGB(255,255,255),
 
-    Text = Computed(function()
-        return StateManager.Masteries["Strength"]:get().." / "..LevelSystemConfig.MileStoneCalc(StateManager.Masteries["Strength"]:get())
-    end)
+FusionLevelUi.CreateSkillCounterUi({
+    Strength,
+    Wisdom,
+    Luck,
+    Stamina,
+})
 
 
-}
+
+
+
+
+
+
+
 
 --//Button actions
 OpenButton.MouseButton1Up:Connect(function()
