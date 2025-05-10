@@ -28,7 +28,7 @@ function Validation.SkillPointCheck(player: Player )
     local profile = ProfileManager.profiles[player]
     if not profile then return warn("[Validation]: Missing Profile") end
 
-    if LevelSystemConfig.LevelCap(profile.Data.Level) then
+    if profile.Data.SkillPoints >= 1 then
         return true
     else
         return false
