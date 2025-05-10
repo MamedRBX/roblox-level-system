@@ -82,6 +82,8 @@ UpdateUiRemote.OnClientEvent:Connect(function(key, payload)
 				StateManager[stat]:set(value)
 			end
 		end
+	else
+		warn("[StateManager]: Key is not recognized")
 	end
 end)
 
