@@ -24,10 +24,10 @@ function Validation.AdjustXp(player: Player)
 
 end
 
-function Validation.SkillPointCheck(player: Player )
+function Validation.SkillPointCheck(player: Player ) 
     local profile = ProfileManager.profiles[player]
     if not profile then return warn("[Validation]: Missing Profile") end
-
+    
     if profile.Data.SkillPoints >= 1 then
         return true
     else

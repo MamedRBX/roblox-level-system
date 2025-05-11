@@ -49,7 +49,10 @@ function StateManager.InitReactiveValues()
 	for skillName, level in pairs(PlayerData.Skills) do
 		StateManager.Masteries[skillName] = Value(level)
 	end
-	print(StateManager.Masteries)
+	
+	--more values for other actions
+	StateManager.SelectedSpendAmount = Value(1) 
+	StateManager.CustomSpendText = Value("")
 end
 
 function StateManager.GetData(): Template.PlayerData
