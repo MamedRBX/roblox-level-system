@@ -2,7 +2,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local StarterPlayer = game:GetService("StarterPlayer")
-
+local SoundService = game:GetService("SoundService")
 
 --// Modules
 local StateManager = require(ReplicatedStorage.Shared.Client.StateManager)
@@ -12,6 +12,11 @@ local Tweens = require(StarterPlayer.StarterPlayerScripts.Client.Tweens)
 local Signals = require(ReplicatedStorage.Shared.Signals.LevelSystemSignals)
 local FormatNumber = require(ReplicatedStorage.Shared.Libs.FormatNumberShort)
 local FusionLevelUi = require(StarterPlayer.StarterPlayerScripts.Client.FusionLevelUi)
+
+--// Sounds
+local SoundsFolder = SoundService:WaitForChild("Sounds"):WaitForChild("LevelSystemSounds") :: Folder
+
+local ClickSound = SoundsFolder.ClickSounds :: Sound
 
 
 StateManager.InitReactiveValues() --init StateManager with Fusion variables
@@ -33,11 +38,20 @@ local Wisdom = Holder.Wisdom
 local Luck = Holder.Luck
 local Stamina = Holder.Stamina
 
+--// Extra stats frame
+local ExtraStats = MasterySP.ExtraStats
+
+local SpendAmount1 = ExtraStats.SpendAmount1
+local SpendAmount3 = ExtraStats.SpendAmount3
+local SpendAmount10 = ExtraStats.SpendAmount10
+
 
 --// Fusion variables
 local New = Fusion.New
 local Computed = Fusion.Computed
-
+local Value = Fusion.Value
+local OnEvent = Fusion.OnEvent
+local OnChange = Fusion.OnChange
 
 --// Buttons
 local infoButton = MasterySP.InfoButton
@@ -153,23 +167,73 @@ FusionLevelUi.CreateSkillCounterUi({ --handles SkillCounter, Milestone display ,
 
 
 
+--//Skill Amount Buttons 
+FusionLevelUi.CreatingSkillAmountButtons(SpendAmount1 , 1)
+FusionLevelUi.CreatingSkillAmountButtons(SpendAmount3, 3)
+FusionLevelUi.CreatingSkillAmountButtons(SpendAmount10, 10)
+
+
+
+
+local CustumSkillSpendAmount = New "TextBox" { --the player can choose how many skillpoints he spends 
+	Name = "CustomSkillAmount",
+	Parent = ExtraStats,
+	Position = UDim2.fromScale(0.114, 0.342),
+	Size = UDim2.fromScale(0.694, 0.21),
+	BackgroundTransparency = 0.8,
+	BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+	AnchorPoint = Vector2.new(0, 0),
+	PlaceholderText = "20....",
+	TextScaled = true,
+	TextColor3 = Color3.fromRGB(255, 255, 255),
+
+	-- Don't bind Text directly — instead listen for changes
+	Text = Computed(function()
+        return StateManager.CustomSpendText:get()
+    end),
+
+    [OnChange "Text"] = function(newText)
+	StateManager.CustomSpendText:set(newText)
+    end,
+
+	[OnEvent "FocusLost"] = function()
+		local input = tonumber(StateManager.CustomSpendText:get())
+        
+		if input and input > 0  then --valid
+			StateManager.SelectedSpendAmount:set(input)
+
+        elseif input == 0 then --invalid input
+            StateManager.SelectedSpendAmount:set(1)
+
+			
+		elseif input == nil then --invalid input
+            StateManager.SelectedSpendAmount:set(1)
+        end
+	end
+}
+
+
+
 --//Button actions
 OpenButton.MouseButton1Up:Connect(function()
+    ClickSound:Play()
 	if debounce then return end
 	debounce = true
 
 	Tweens.tweenFrame(MasterySP)
 
-	task.delay(1, function()
+	task.delay(0.6, function()
 		debounce = false
 	end)
 end)
 
 closeButton.MouseButton1Up:Connect(function()
-    MasterySP.Visible = not MasterySP.Visible
+    ClickSound:Play()
+    Tweens.tweenFrame(MasterySP)
 end)
 
 infoButton.MouseButton1Up:Connect(function()
+    ClickSound:Play()
     --show infos 
 end)
 
