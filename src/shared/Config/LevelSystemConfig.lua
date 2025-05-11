@@ -5,7 +5,7 @@ local LevelSystemConfig = {} --Start of the Module
 local Base_Xp_Cost = 100
 local XpCost_Increase_Per_Level = 25
 local SkillCap = 100
-local LevelCap = 100
+local LevelCap = 115
 local milestones = {25, 50, 75, 100}
 
 
