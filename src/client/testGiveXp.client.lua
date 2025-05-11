@@ -14,8 +14,6 @@ local LevelSystemConfig = require(ReplicatedStorage.Shared.Config.LevelSystemCon
 local GiveXP = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder"): WaitForChild("XpChange") :: RemoteEvent
 
 
-
-
 task.wait(5)
 
 while true do
@@ -23,6 +21,6 @@ while true do
         GiveXP:FireServer(300)
     end
     
-    task.wait(0.1)
+    task.wait(1)
 end
 
