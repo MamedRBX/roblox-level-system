@@ -15,7 +15,7 @@ local LevelSystemFolder = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRe
 local UpdateUi = LevelSystemFolder:WaitForChild("UpdateUi") :: RemoteEvent
 
 
-local MasterySP = {}
+local MasterySP = {} --Start of the Module
 
 --// Functions 
 function MasterySP.OnLevelUp(player)
@@ -29,7 +29,7 @@ function MasterySP.OnLevelUp(player)
 
 end
 
-function MasterySP.OnSPSpend(player: Player, amount: number, SkillName: string)
+function MasterySP.OnSPSpend(player: Player, amount: number, SkillName: string) --function when the player spends Mastery Skill Points
 	local profile = ProfileManager.profiles[player]
 	if not profile then return warn("[MasterySP]: Missing Profile") end
 
