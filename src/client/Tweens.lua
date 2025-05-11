@@ -2,11 +2,20 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 --// Modules 
 local Janitor = require(ReplicatedStorage._Packages.Janitor)
 
+--//Sounds
+local SoundsFolder = SoundService:WaitForChild("Sounds"):WaitForChild("LevelSystemSounds") ::Folder
+
+local XpSound = SoundsFolder.XpSound :: Sound
+local LevelupSound = SoundsFolder.LevelupSound :: Sound
+
 local Tween = {} ---Start of the Module
+
+
 
 --// Popup Xp Label 
 function Tween.showXpGainPopup(amount:number)
@@ -44,6 +53,7 @@ function Tween.showXpGainPopup(amount:number)
     janitor:Add(popup, "Destroy")
 
     Tween:Play()
+    XpSound:Play()
 end
 
 
@@ -81,6 +91,7 @@ function Tween.showLevelGainPopup()
     janitor:Add(popup, "Destroy")
 
     tween:Play()
+    LevelupSound:Play()
 end
 
 --// In Out Tween for Frames
