@@ -74,6 +74,9 @@ function LevelSystemConfig.LevelCap(Level: number) : boolean  --returns if the p
 	if Level >= LevelCap then return false else return true end
 end
 
+function LevelSystemConfig.ReturnSkillCap()
+	return SkillCap
+end
 
 
 return  LevelSystemConfig
