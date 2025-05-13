@@ -56,7 +56,6 @@ function FusionLevelUi.SkillCounterUi(parent: Frame) --creates a TextLabel for d
 		Text = Computed(function()
 			local mastery = StateManager.Masteries[skillName]
 			if not mastery then return "??" end
-
 			return math.floor(mastery:get()) .. " / " .. LevelSystemConfig.GetMileStoneEnd(math.floor(mastery:get()))
 		end)
 	}
@@ -124,7 +123,7 @@ function FusionLevelUi.SkillButton(parent: Frame)--SkillButtons for Skills
 			if StateManager.SkillPoints:get() <= 0 then
 				display = false
 			else
-				if StateManager.Masteries[parent.Name]:get() < 100 then
+				if StateManager.Masteries[parent.Name]:get() < LevelSystemConfig.ReturnSkillCap() then
 					display = true
 				else
 					display = false
@@ -136,12 +135,14 @@ function FusionLevelUi.SkillButton(parent: Frame)--SkillButtons for Skills
 		[OnEvent "Activated"] = function()
 		ClickSound:Play()
 		if StateManager.SkillPoints:get() >= 1 then --quick validation
-			if StateManager.SelectedSpendAmount:get() % 1 == 0 and not StateManager.SelectedSpendAmount:get() == 0 then
+			print(StateManager.SelectedSpendAmount:get())
+			if StateManager.SelectedSpendAmount:get() % 1 == 0 and StateManager.SelectedSpendAmount:get() ~= 0 then
 				SkillPointSpend:Play()
 				SpendMasterySP:FireServer(StateManager.SelectedSpendAmount:get(), parent.Name) --point spend
 			else
+				print("number is not even")
 				SkillPointSpend:Play()
-				SpendMasterySP:FireServer(1, parent.Name)
+				SpendMasterySP:FireServer(1 , parent.Name)
 			end
 			
 		else
