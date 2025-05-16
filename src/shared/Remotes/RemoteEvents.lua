@@ -24,7 +24,9 @@ local SpendMasterySP = Instance.new("RemoteEvent", LevelRemotesFolder)
 SpendMasterySP.Name = "SpendMasterySP"
 
 local SpendSkillTreeSP = Instance.new("RemoteEvent", LevelRemotesFolder)
-SpendSkillTreeSP.Name = "SpendSkilTreeSP"
+SpendSkillTreeSP.Name = "SpendSkillTreeSP"
 
+local ClearAllStats = Instance.new("RemoteEvent", LevelRemotesFolder)
+ClearAllStats.Name = "ClearAllStats"
 
 return RemoteEvent

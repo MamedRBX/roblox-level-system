@@ -23,6 +23,7 @@ function MasterySP.OnLevelUp(player)
     if not profile then return warn("[MasterySP]: Missing Profile") end
 
     profile.Data.SkillPoints += 1 
+	
     UpdateUi:FireClient(player, "Update" ,  {
         SkillPoints = profile.Data.SkillPoints
     })

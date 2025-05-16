@@ -1,4 +1,4 @@
--- SkillData.lua
+
 
 export type SkillEntry = {
 	Name: string,
@@ -6,6 +6,8 @@ export type SkillEntry = {
 	Cost: number,
 	Req: { string }?, -- optional list of required skill IDs
 	Max: number,
+	UnlockedIcon: string,
+	LockedIcon: string,
 }
 
 export type SkillDataTable = {
@@ -17,9 +19,11 @@ local SkillData: SkillDataTable = {
 	--// Origin Skill
 	Gold1 = {
 		Name = "Gold1",
-		SkillType = "Origin", 
+		SkillType = "Gold", 
 		Cost = 1,
 		Max = 5,
+		UnlockedIcon = "rbxassetid://80611268709617",
+		LockedIcon = "rbxassetid://104325355169552",
 	},
 
 	--// Strength
@@ -28,6 +32,9 @@ local SkillData: SkillDataTable = {
 		SkillType = "Strength",
 		Cost = 1,
 		Max = 1,
+		Req = {"Gold1"},
+		UnlockedIcon = "",
+		LockedIcon = "",
 	},
 
 
@@ -40,7 +47,7 @@ local SkillData: SkillDataTable = {
 	},
 
 	Strength3 = {
-		Name = "Strength2",
+		Name = "Strength3",
 		SkillType = "Strength",
 		Cost = 1,
 		Req = { "Strength1" },
@@ -53,18 +60,21 @@ local SkillData: SkillDataTable = {
 		SkillType = "Stamina",
 		Cost = 1,
 		Max = 1,
+		Req = { "Gold1" }
 	},
 	Stamina2 = {
 		Name = "Stamina2",
 		SkillType = "Stamina",
 		Cost = 1,
 		Max = 1,
+		Req = { "Stamina1" },
 	},
 	Stamina3 = {
-		Name = "Stamina2",
+		Name = "Stamina3",
 		SkillType = "Stamina",
 		Cost = 1,
 		Max = 1,
+		Req = { "Stamina1" },
 	},
 
 	--// Wisdom
@@ -73,18 +83,22 @@ local SkillData: SkillDataTable = {
 		SkillType = "Wisdom",
 		Cost = 1,
 		Max = 1,
+		Req = {"Gold1"},
+
 	},
 	Wisdom2 = {
-		Name = "Wisdom1",
+		Name = "Wisdom2",
 		SkillType = "Wisdom",
 		Req = {"Wisdom1"},
 		Cost = 1,
 		Max = 1,
-	},
+		
+	}, 
 
 	Wisdom3 = {
-		Name = "Wisdom1",
+		Name = "Wisdom3",
 		SkillType = "Wisdom",
+		Req = {"Wisdom1"},
 		Cost = 1,
 		Max = 1,
 	},
@@ -95,19 +109,37 @@ local SkillData: SkillDataTable = {
 		SkillType = "Luck",
 		Cost = 1,
 		Max = 1,
+		Req = {"Gold1"},
 	},
 	Luck2 = {
-		Name = "Luck1",
+		Name = "Luck2",
 		SkillType = "Luck",
 		Cost = 1,
 		Max = 1,
+		Req = {"Luck1"},
+
 	},
 	Luck3 = {
-		Name = "Luck1",
+		Name = "Luck3",
 		SkillType = "Luck",
 		Cost = 1,
 		Max = 1,
+		Req = {"Luck1"},
+
 	}
-}
+} 
+
+
+function SkillData.GotRequirements(Data: {}, Skill: {})
+    local Req = Skill["Req"]
+    if not Req then return true end
+
+    for _, info in Req do
+        if not Data[info] then return false end
+        if Data[info]:get() < 1 then return false end
+    end
+
+    return true
+end
 
 return SkillData

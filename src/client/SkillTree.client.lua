@@ -1,6 +1,7 @@
 --// Services 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterPlayer = game:GetService("StarterPlayer")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
@@ -8,7 +9,7 @@ local RunService = game:GetService("RunService")
 local Fusion = require(ReplicatedStorage._Packages.Fusion)
 local Janitor = require(ReplicatedStorage._Packages.Janitor) 
 local SkillTreeData = require(ReplicatedStorage.Shared.Config.SkillTreeData)
-
+local FusionSkillTree = require(StarterPlayer.StarterPlayerScripts.Client.FusionSkillTree)
 
 --// Fusion
 local Hydrate = Fusion.Hydrate	
@@ -133,21 +134,19 @@ end
 
 
 --//Creating the SkillButtons
-for Skill , info in SkillTreeData do 
-	--search for the right folder
+for Skill, info in pairs(SkillTreeData) do
+	if typeof(info) ~= "table" then continue end -- skip functions like GotRequirements
 
 	local SkillData = SkillTreeData[Skill]
-	print(SkillData.SkillType)
-	local Frame: Frame = SkillFolder:FindFirstChild(SkillData.SkillType):FindFirstChild(SkillData.Name)
-	if not Frame then return warn("[SkillTreeClient]: Missing Frame for Skill") end
+	if not SkillData then warn("[SkillTree]: Missing Skill in SkillTreeData") continue end
 
-	--create button , 
+	local SkillTypeFolder = SkillFolder:FindFirstChild(SkillData.SkillType)
+	if not SkillTypeFolder then warn("[SkillTree]: Missing Folder for the Skill") continue end
 
+	local Frame: Frame = SkillTypeFolder:FindFirstChild(SkillData.Name)
+	if not Frame then warn("[SkillTreeClient]: Missing Frame for Skill") continue end
 
-	--create a not skilled imagelabel 
-	--create another image for the icon in the unskilled fase
-	--and another one for the skilled fase
-	--if the player has enough points then let it be clickable
+	FusionSkillTree.BuildSkill(info, Frame)
 end
 
 

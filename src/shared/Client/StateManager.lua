@@ -7,7 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Template = require(ReplicatedStorage.Shared.PlayerData.template)
 local Fusion = require(ReplicatedStorage._Packages.Fusion)
 local Signals = require(ReplicatedStorage.Shared.Signals.LevelSystemSignals)
-
+local SkillTreeData = require(ReplicatedStorage.Shared.Config.SkillTreeData)
 
 --//Remotes 
 local UpdateUiRemote  = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder"):WaitForChild("UpdateUi") :: RemoteEvent
@@ -17,6 +17,7 @@ local PlayerData: Template.PlayerData
 
 --// Fusion Variables 
 local Value = Fusion.Value
+
 
 --//Functions
 local function LoadData()
@@ -37,6 +38,8 @@ local StateManager = {} --Start of the Module Script
 
 
 StateManager.Masteries = {} --List of Masteries and their values
+StateManager.SkillTreeSkills = {} --List of the skills from the skilltree that the player has leveled or unlocked
+
 
 --// Loading Fusion Values
 function StateManager.InitReactiveValues()
@@ -49,11 +52,26 @@ function StateManager.InitReactiveValues()
 	for skillName, level in pairs(PlayerData.Skills) do
 		StateManager.Masteries[skillName] = Value(level)
 	end
-	
-	--more values for other actions
+
+	-- Fill the SkillTreeSkills table with saved values (if any)
+	for skillName, level in pairs(PlayerData.SkillTreeSkills) do 
+		StateManager.SkillTreeSkills[skillName] = Value(level)
+	end
+
+	-- Ensure all skills have reactive state, even if not yet unlocked
+	for skillName, skillData in pairs(SkillTreeData) do
+		if typeof(skillData) ~= "table" then continue end
+		-- Only add if not already added from PlayerData
+		if not StateManager.SkillTreeSkills[skillName] then
+			StateManager.SkillTreeSkills[skillName] = Value(0)
+		end
+	end
+
+	-- More values for other actions
 	StateManager.SelectedSpendAmount = Value(1) 
 	StateManager.CustomSpendText = Value("")
 end
+
 
 function StateManager.GetData(): Template.PlayerData
 	while not isDataLoaded do
@@ -65,14 +83,16 @@ end
 
 --// Recevie Remotes
 UpdateUiRemote.OnClientEvent:Connect(function(key, payload)
+	
 	if not key or not payload then
 		warn("[StateManager]:Missing key or payload")
 		return
 	end
 	
 	if key == "Update" then
+		
 		for stat, value in pairs(payload) do --We go throught the updated Data from the server
-
+			print(payload)
 			if stat == "Xp" then 
 				if StateManager.Xp:get() < value then --quick validation
 					Signals.XpPopUp:Fire(StateManager.Xp:get(), value)--just for a xp popup frame
@@ -90,7 +110,24 @@ UpdateUiRemote.OnClientEvent:Connect(function(key, payload)
 					
 				end
 				return 
+			
+			elseif stat == "SkillTreeSkills" then 
+				for skill, skillvalue in value do 
+					local Skill = StateManager.SkillTreeSkills[skill]
+
+					if not Skill then
+						-- create a new state if it doesn't exist
+						Skill = Value(skillvalue)
+						StateManager.SkillTreeSkills[skill] = Skill
+						
+					else
+						Skill:set(skillvalue)
+					end
+				end
+				print(StateManager.SkillTreeSkills)
+				return
 			end
+			
 			StateManager[stat]:set(value)
 		
 		end

@@ -7,6 +7,10 @@ local Signals = require(ReplicatedStorage.Shared.Signals.LevelSystemSignals)
 local LevelSystemConfig = require(ReplicatedStorage.Shared.Config.LevelSystemConfig)
 local ProfileManager = require(ServerScriptService.Server.PlayerData.ProfileManager)
 
+--// Remotes 
+local RemoteFolder = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder") :: Folder
+local UdapteUiRemote  = RemoteFolder:WaitForChild("UpdateUi") :: RemoteEvent 
+
 local LevelProgression = {}
 
 --// Functions
@@ -43,8 +47,7 @@ function LevelProgression.AdjustXp(player:Player , amount:number) --adding Xp to
     --Update Level
     player.leaderstats.Level.Value = profile.Data.Level
 
-    --Updating Ui 
-    local UdapteUiRemote  = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder"):WaitForChild("UpdateUi") :: RemoteEvent 
+    --Update Ui
     UdapteUiRemote:FireClient(player, "Update", {
      Xp = profile.Data.Xp ,
      Level = profile.Data.Level ,

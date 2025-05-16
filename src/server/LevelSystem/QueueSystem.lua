@@ -18,6 +18,12 @@ local ActionHandlers = {
 	SpendMasterySP = function(player:Player , amount:number, SkillName:string)
 		Signals.SpendMasterySP:Fire(player, amount, SkillName)
 		
+	end,
+	SpendSkillTreeSP = function(player:Player , SkillName:string)
+		Signals.SpendSkillTreeSP:Fire(player, SkillName)
+	end,
+	ClearAllStats = function(player: Player)
+		Signals.ClearAllStats:Fire(player )
 	end
 }
 

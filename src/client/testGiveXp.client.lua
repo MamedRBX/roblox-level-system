@@ -1,6 +1,7 @@
 --// Services 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterPlayer = game:GetService("StarterPlayer")
 
 --//Refs
 local player = Players.LocalPlayer
@@ -11,16 +12,26 @@ local LevelSystemConfig = require(ReplicatedStorage.Shared.Config.LevelSystemCon
 
 
 --// Remotes
-local GiveXP = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder"): WaitForChild("XpChange") :: RemoteEvent
+local RemoteFolder = ReplicatedStorage.Shared.Remotes:WaitForChild("LevelRemotesFolder")
+
+local GiveXP = RemoteFolder:WaitForChild("XpChange") :: RemoteEvent
+local ClearAllStats = RemoteFolder:WaitForChild("ClearAllStats") :: RemoteEvent
+
+-- task.wait(5)
 
 
-task.wait(5)
 
-while true do
-    if LevelSystemConfig.LevelCap(StateManager.Level:get()) then
-        GiveXP:FireServer(300)
-    end
+-- while true do
+--     if LevelSystemConfig.LevelCap(StateManager.Level:get()) then
+--         GiveXP:FireServer(300)
+--     end
     
-    task.wait(1)
-end
+--     task.wait(1)
+-- end
 
+
+--// Button Actions
+local Button = player.PlayerGui.LevelingSystem.TextButton
+Button.MouseButton1Up:Connect(function()
+    ClearAllStats:FireServer()
+end)

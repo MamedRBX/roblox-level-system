@@ -11,6 +11,7 @@ local Signals = {
     LevelUp = Signal.new(), 
     SpendMasterySP = Signal.new(),
     SpendSkillTreeSP = Signal.new(),
+    ClearAllStats = Signal.new(),
     -- add more as needed
 
     
